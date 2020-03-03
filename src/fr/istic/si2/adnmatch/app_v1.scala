@@ -16,9 +16,11 @@ object ADNMatchV1 extends App {
   
   val bases2 : List[Base] = List(T,T,G,G,C,C,A,A)
   
-  //val bases3 : List[Base] = Some(lireSequence())
- 
+
   val bases4 : List[Base] = List(T,T,G,G,C,C,A,A)
+
+  //val bases3 : List[Base] = Some(lireSequence())fsefse 
+
   
   
   println("[" + listeBasesToString(bases2) + "]")
