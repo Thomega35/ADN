@@ -61,20 +61,30 @@ object FonctionsRExp {
    * @param e une expression régulière
    * @return une liste de bases obtenue en déroulant e tout le temps de la même manière.
    * @note si choix on affiche la première valeure
-   * 			 si répétition on affiche 2 fois la base
-   * 			 si Nqb on affiche A
+   * si répétition on affiche 2 fois la base
+   * si Nqb on affiche A
    */
   def deroule(e: RExp): Option[List[Base]] = {
-    Some(derouleSous(e))
+    e match {
+      case Vide => None
+      case _    => Some(derouleSous(e))
+    }
   }
   
   def derouleSous(e: RExp): List[Base] ={
     e match {
-      case Nqb        => A :: Nil
-      case UneBase(a) => a :: Nil
-      case Choix(a,b) => derouleSous(a)
-      case Concat(a,b)=> derouleSous(a) ++ derouleSous(b)
-      
+      case Nqb         => A :: Nil
+      case UneBase(a)  => a :: Nil
+      case Choix(a,b)  => derouleSous(a)
+      case Concat(a,b) => derouleSous(a) ++ derouleSous(b)
+      case Repete(a)   => derouleSous(a) ++ derouleSous(a)
+      case NFois(a,0)  => Nil
+      case NFois(a,b)  => derouleSous(a) ++ derouleSous(NFois(a,b-1))
     }
   }
+
+
+
+
+
 }
