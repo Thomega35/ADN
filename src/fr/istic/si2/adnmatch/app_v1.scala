@@ -18,8 +18,26 @@ object ADNMatchV1 extends App {
   
   val bases3 : List[Base] = List(G,C,A,T)
   
+  val rexp1  : RExp = Repete(UneBase(T))
   
-  println("[" + listeBasesToString(bases2) + "]")
+  val rexp2  : RExp = Choix(UneBase(T),UneBase(G))
+  
+  val rexp3  : RExp = Concat(UneBase(A),Concat(UneBase(T),Concat(UneBase(C),UneBase(G))))
+  
+  
+  //test
+  /*
+  println(listeBasesToString(bases2))
+  println(listeBasesToString(bases3))
+  println()
+  println(rExpToString(rexp2))
+  println(rExpToString(rexp3))
+  println(litRExp(rExpToString(rexp2)))
+  println(litRExp(rExpToString(rexp3)))
+  println()
+  
+  */
+  
 }
 
 

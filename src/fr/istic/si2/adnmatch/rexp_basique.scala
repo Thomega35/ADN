@@ -36,10 +36,7 @@ object FonctionsRExp {
   def listeBasesToString(lb: List[Base]): String = {
     lb match {
       case Nil    => ""
-      case A :: b => "A" + listeBasesToString(b)
-      case T :: b => "T" + listeBasesToString(b)
-      case C :: b => "C" + listeBasesToString(b)
-      case G :: b => "G" + listeBasesToString(b)
+      case a :: b => a + listeBasesToString(b)
     }
   }
       
@@ -47,15 +44,37 @@ object FonctionsRExp {
    * @param e une expression régulière
    * @return la représentation textuelle de e, avec toutes les parenthèses nécessaires
    */
-  // TODO V1
-  def rExpToString(e: RExp): String = ???
+  def rExpToString(e: RExp): String = {
+    e match {
+      //case Impossible  => "@"
+      //case Vide        => "%"
+      case Nqb         => "."
+      case UneBase(a)  => a + ""
+      case Choix(a,b)  => "(" + rExpToString(a) + "|" + rExpToString(b) + ")"
+      case Concat(a,b) => rExpToString(a) + rExpToString(b)
+      case Repete(a)   => rExpToString(a) + "*"
+      case NFois(a,b)  => "(" + rExpToString(a) + ")" + "{" + b + "}"
+    }
+  }
 
   /**
    * @param e une expression régulière
    * @return une liste de bases obtenue en déroulant e tout le temps de la même manière.
-   * @note Indiquez ici vos choix réalisés pour les répétitions, les choix, les Nqb.
+   * @note si choix on affiche la première valeure
+   * 			 si répétition on affiche 2 fois la base
+   * 			 si Nqb on affiche A
    */
-  // TODO V1
-  def deroule(e: RExp): Option[List[Base]] = ???
-
+  def deroule(e: RExp): Option[List[Base]] = {
+    Some(derouleSous(e))
+  }
+  
+  def derouleSous(e: RExp): List[Base] ={
+    e match {
+      case Nqb        => A :: Nil
+      case UneBase(a) => a :: Nil
+      case Choix(a,b) => derouleSous(a)
+      case Concat(a,b)=> derouleSous(a) ++ derouleSous(b)
+      
+    }
+  }
 }
