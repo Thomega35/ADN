@@ -1,2 +1,10 @@
 *.class
 *.log
+/bin
+/fichiers
+/.settings
+.project
+.scalastyle
+.adnmatchlib.jar
+gll-combinators_2.12-2.3.jar
+sir2.jar
