@@ -46,8 +46,8 @@ object FonctionsRExp {
    */
   def rExpToString(e: RExp): String = {
     e match {
-      //case Impossible  => "@"
-      //case Vide        => "%"
+      case Impossible  => "@"
+      case Vide        => "%"
       case Nqb         => "."
       case UneBase(a)  => a + ""
       case Choix(a,b)  => "(" + rExpToString(a) + "|" + rExpToString(b) + ")"
@@ -66,20 +66,37 @@ object FonctionsRExp {
    */
   def deroule(e: RExp): Option[List[Base]] = {
     e match {
-      case Vide => None
-      case _    => Some(derouleSous(e))
-    }
-  }
-  
-  def derouleSous(e: RExp): List[Base] ={
-    e match {
-      case Nqb         => A :: Nil
-      case UneBase(a)  => a :: Nil
-      case Choix(a,b)  => derouleSous(a)
-      case Concat(a,b) => derouleSous(a) ++ derouleSous(b)
-      case Repete(a)   => derouleSous(a) ++ derouleSous(a)
-      case NFois(a,0)  => Nil
-      case NFois(a,b)  => derouleSous(a) ++ derouleSous(NFois(a,b-1))
+      case Vide          => None
+      case Impossible    => None
+      case Nqb           => Some(A :: Nil)
+      case UneBase(base) => Some(base :: Nil)
+      case Choix(exp, _) => deroule(exp) 
+      case Concat(exp, exp2) =>
+        deroule(exp) match {
+          case None => None
+          case Some(list1) => {
+            deroule(exp2) match {
+              case None        => None
+              case Some(list2) => Some(list1 ++ list2)
+            }
+          }
+        }
+      case Repete(exp) =>
+        deroule(exp) match {
+          case None       => None
+          case Some(list) => Some(list ++ list)
+        }
+      case NFois(exp, 0) => Some(Nil)
+      case NFois(exp, n) =>
+        deroule(exp) match {
+          case None => None
+          case Some(list1) => {
+            deroule(NFois(exp, n - 1)) match {
+              case None        => None
+              case Some(list2) => Some(list1 ++ list2)
+            }
+          }
+        }
     }
   }
 
