@@ -33,9 +33,16 @@ object FonctionsRExp {
    * @param lb une liste de bases azotées
    * @return une chaîne de caractères représentant les bases de lb, dans l'ordre
    */
-  // TODO V1
-  def listeBasesToString(lb: List[Base]): String = ???
-
+  def listeBasesToString(lb: List[Base]): String = {
+    lb match {
+      case Nil    => ""
+      case A :: b => "A" + listeBasesToString(b)
+      case T :: b => "T" + listeBasesToString(b)
+      case C :: b => "C" + listeBasesToString(b)
+      case G :: b => "G" + listeBasesToString(b)
+    }
+  }
+      
   /**
    * @param e une expression régulière
    * @return la représentation textuelle de e, avec toutes les parenthèses nécessaires

@@ -11,5 +11,27 @@ import fr.istic.si2.adnmatchlib._
 object ADNMatchV1 extends App {
 
   println("ADNMatch Version 1")
-  // TODO V1 - A compléter
+  
+  val bases1 : List[Base] = List(A,T,C,G)
+  
+  val bases2 : List[Base] = List(T,T,G,G)
+  
+  val bases3 : List[Base] = Some(lireSequence())
+  
+  
+  println("[" + listeBasesToString(bases2) + "]")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
