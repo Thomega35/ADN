@@ -16,7 +16,7 @@ object ADNMatchV1 extends App {
   
   val bases2 : List[Base] = List(T,T,G,G)
   
-  //val bases3 : List[Base] = Some(lireSequence())
+  //val bases3 : List[Base] = Some(lireSequence())gdthd
   
   
   println("[" + listeBasesToString(bases2) + "]")
