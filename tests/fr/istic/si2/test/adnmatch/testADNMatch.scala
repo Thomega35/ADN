@@ -6,9 +6,11 @@ import org.junit.Assert._
 import util.Random
 import fr.istic.si2.testerApp._
 import fr.istic.si2.moreAssertions._
+import fr.istic.si2.scribble._
 import fr.istic.si2.math._
 
 import fr.istic.si2.adnmatch._
+import fr.istic.si2.adnmatchlib._
 import fr.istic.si2.adnmatch.FonctionsRExp._
 import fr.istic.si2.adnmatch.RExpMatcher._
 
@@ -18,13 +20,15 @@ class ADNMatchTest {
 
   // Vous aurez besoin de réaliser les imports adéquats.
   // Si besoin, demandez de l'aide à votre encadrant.
+  // Veuillez nommer vos tests unitaires convenablement.
 
   /**
-   * A compléter
+   * Test si la fonction listeBasesToString() renvoie bien "A" avec comme paramètre List(A)
+   * 
    */
   @Test
-  def test() { // Veuillez nommer vos tests unitaires convenablement.
-    fail()
+  def testLBTS1() { 
+    assertEquals(expected, actual)
   }
 
 }
