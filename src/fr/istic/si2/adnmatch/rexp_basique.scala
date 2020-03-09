@@ -35,73 +35,75 @@ object FonctionsRExp {
    */
   def listeBasesToString(lb: List[Base]): String = {
     lb match {
-      case Nil    => ""
-      case a :: b => a + listeBasesToString(b)
+      case Nil          => ""
+      case base :: list => base.toString() + listeBasesToString(list)
     }
   }
-      
+
   /**
    * @param e une expression régulière
    * @return la représentation textuelle de e, avec toutes les parenthèses nécessaires
    */
   def rExpToString(e: RExp): String = {
     e match {
-      case Impossible  => "@"
-      case Vide        => "%"
-      case Nqb         => "."
-      case UneBase(a)  => a + ""
-      case Choix(a,b)  => "(" + rExpToString(a) + "|" + rExpToString(b) + ")"
-      case Concat(a,b) => rExpToString(a) + rExpToString(b)
-      case Repete(a)   => rExpToString(a) + "*"
-      case NFois(a,b)  => "(" + rExpToString(a) + ")" + "{" + b + "}"
+      case Impossible           => "@"
+      case Vide                 => "%"
+      case Nqb                  => "."
+      case UneBase(base)        => base.toString()
+      case Choix(rexp1, rexp2)  => s"(${rExpToString(rexp1)}|${rExpToString(rexp2)})"
+      case Concat(rexp1, rexp2) => s"${rExpToString(rexp1)}${rExpToString(rexp2)}"
+      case Repete(rexp)         => s"${rExpToString(rexp)}*"
+      case NFois(rexp, n)       => s"(${rExpToString(rexp)}){$n}"
     }
   }
 
   /**
    * @param e une expression régulière
    * @return une liste de bases obtenue en déroulant e tout le temps de la même manière.
-   * @note si choix on affiche la première valeure
-   * si répétition on affiche 2 fois la base
-   * si Nqb on affiche A
+   * @note
+   * si il y a un choix, on rend le premier élément si il n'est pas Impossible sinon le second
+   * si il y a répétition, on rend 2 fois l'élément
+   * si il y a Nqb, on rend la base A
    */
   def deroule(e: RExp): Option[List[Base]] = {
     e match {
-      case Vide          => None
       case Impossible    => None
+      case Vide          => Some(Nil)
       case Nqb           => Some(A :: Nil)
       case UneBase(base) => Some(base :: Nil)
-      case Choix(exp, _) => deroule(exp) 
-      case Concat(exp, exp2) =>
-        deroule(exp) match {
+      case Concat(rexp1, rexp2) =>
+        deroule(rexp1) match {
           case None => None
-          case Some(list1) => {
-            deroule(exp2) match {
+          case Some(list1) =>
+            deroule(rexp2) match {
               case None        => None
               case Some(list2) => Some(list1 ++ list2)
             }
-          }
         }
-      case Repete(exp) =>
-        deroule(exp) match {
+      case Repete(rexp) =>
+        deroule(rexp) match {
           case None       => None
           case Some(list) => Some(list ++ list)
         }
-      case NFois(exp, 0) => Some(Nil)
-      case NFois(exp, n) =>
-        deroule(exp) match {
-          case None => None
-          case Some(list1) => {
-            deroule(NFois(exp, n - 1)) match {
-              case None        => None
-              case Some(list2) => Some(list1 ++ list2)
+      case NFois(rexp, n) =>
+        n match {
+          case 0 => Some(Nil)
+          case _ =>
+            deroule(rexp) match {
+              case None => None
+              case Some(list1) => {
+                deroule(NFois(rexp, n - 1)) match {
+                  case None        => None
+                  case Some(list2) => Some(list1 ++ list2)
+                }
+              }
             }
-          }
+        }
+      case Choix(rexp1, rexp2) =>
+        deroule(rexp1) match { //permet de prendre le second (rexp2) si le premier (rexp1) est impossible
+          case None    => deroule(rexp2)
+          case Some(_) => deroule(rexp1)
         }
     }
   }
-
-
-
-
-
 }

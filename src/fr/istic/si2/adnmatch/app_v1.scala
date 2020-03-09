@@ -11,56 +11,45 @@ import java.util.Scanner
  */
 object ADNMatchV1 extends App {
 
-  println("ADNMatch Version 1")
-  val bases1 : List[Base] = List(A,T,C,G)
-  val bases2 : List[Base] = List(T,T,G,G,C,C,A,A)
-  val bases3 : List[Base] = List(G,C,A,T)
-  val rexp1  : RExp = Repete(UneBase(T))
-  val rexp2  : RExp = Choix(UneBase(T),UneBase(G))
-  val rexp3  : RExp = Concat(UneBase(A),Concat(UneBase(T),Concat(UneBase(C),UneBase(G))))
-  //test
-  /*
-  println(listeBasesToString(bases2))
-  println(listeBasesToString(bases3))
-  println()
-  println(rExpToString(rexp2))
-  println(rExpToString(rexp3))
-  println(litRExp(rExpToString(rexp2)))
-  println(litRExp(rExpToString(rexp3)))
-  println()
-  */
-  val s = new Scanner(System.in)
-  
+  val exampleList1: List[Base] = List(A, T, C, G)
+  val exampleList2: List[Base] = List(T, T, G, G, C, C, A, A)
+  val exampleList3: List[Base] = List(G, C, A, T)
+  val exampleRExp1: RExp = Repete(UneBase(T))
+  val exampleRExp2: RExp = Choix(UneBase(T), UneBase(G))
+  val exampleRExp3: RExp = Concat(UneBase(A), Concat(UneBase(T), Concat(UneBase(C), UneBase(G))))
+
+  println("\nADNMatch Version 1\n")
+  val scanner = new Scanner(System.in)
+
   /**
-   * Application qui permet de saisir, afficher puis dérouler 
+   * Application qui permet de saisir, afficher puis dérouler
    * une expression RExp autant de fois qu'on le souhaite
    */
-  def boucle ():Unit ={
-    println("╔═════════════════════════════════════════════════════════════════╗")
-    println("║ Taper D pour saisir, afficher puis dérouler une expression RExp ║")
-    println("║ Taper Q pour quitter l'application                              ║")
-    println("╚═════════════════════════════════════════════════════════════════╝")
-    val a = s.nextLine()
-    a match{
-      case "D"|"d" => 
-        println("Entrez une expression RExp")
-        val b = s.nextLine()
-        litRExp(b) match{
-          case Some(lb) => println("Voici un déroulement possible de " + rExpToString(lb) + ":")
-            deroule(lb) match {
-              case Some(a) => println(listeBasesToString(a))
-              case None    => println("Expression vide")
+  def mainLoop(): Unit = {
+    println("╔═══════════════════════════════════════════════════════╗")
+    println("║ Veiller saisir une expression régulière               ║")
+    println("║ Taper `quit` pour quitter l'application               ║")
+    println("╚═══════════════════════════════════════════════════════╝")
+    val input = scanner.nextLine()
+    input match {
+      case "quit" => println("\nFin de programme\nADNMatch Version 1\n")
+      case _ => {
+        litRExp(input) match {
+          case Some(rexp) => {
+            print(s"Voici un déroulement possible de ${rExpToString(rexp)} : ")
+            deroule(rexp) match {
+              case None       => println("-Expression impossibe-\n")
+              case Some(list) => println(s"${listeBasesToString(list)}\n")
             }
-          case None     => println("Mauvaise expression, recommencez")
+          }
+          case None => println("Mauvaise expression, recommencez")
         }
-        boucle()
-      case "Q"|"q" => println("Bye Bye")
-      case _       => 
-        println("Mauvaise entrée, recommencez")
-        boucle()
+        mainLoop()
+      }
     }
   }
-  boucle()
+  mainLoop()
+
 }
 
 
