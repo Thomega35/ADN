@@ -40,7 +40,7 @@ object RExpMatcher {
       case Repete(rexp) => simplifiedConcat(derivee(rexp, b), Repete(rexp))
       case NFois(rexp, n) => {
         n match {
-          case 0 => Impossible
+          case 0 => derivee(Vide, b)
           case 1 => derivee(rexp, b)
           case _ => simplifiedConcat(derivee(rexp, b), NFois(rexp, n - 1))
         }
@@ -153,28 +153,27 @@ object RExpMatcher {
    */
   def prefixeMatch(e: RExp, lb: List[Base]): Option[List[Base]] = {
     lb match {
-      case Nil =>  
+      case Nil =>
         matchComplet(e, Nil) match {
           case true  => Some(Nil)
           case false => None
-        } 
+        }
       case _ :: _ => {
         matchComplet(e, lb) match {
           case true  => Some(lb)
-          case false => prefixeMatch(e,supprDernierElement(lb))
+          case false => prefixeMatch(e, supprDernierElement(lb))
         }
       }
     }
   }
 
-  def supprDernierElement(lb : List[Base]): List[Base] = {
+  def supprDernierElement(lb: List[Base]): List[Base] = {
     lb match {
       case Nil | _ :: Nil => Nil
       case base :: list   => base :: supprDernierElement(list)
     }
   }
-  
-  
+
   /**
    * @param pref une liste de bases azotées *préfixe* de lb
    * @param lb une liste de bases azotées
@@ -204,7 +203,7 @@ object RExpMatcher {
       case Nil => Nil
       case base :: list => {
         prefixeMatch(e, lb) match {
-          case None => (NonDecrite, base) :: tousLesMatchs(e, list)
+          case None          => (NonDecrite, base) :: tousLesMatchs(e, list)
           case Some(subList) => sequenceDecrite(subList) ++ tousLesMatchs(e, suppPrefixe(subList, lb))
         }
       }
@@ -217,9 +216,9 @@ object RExpMatcher {
    */
   def messageResultat(lbm: List[(Marqueur, Base)]): String = {
     lbm match {
-      case (NonDecrite, _) :: list => messageResultat(list)
       case Nil                     => "Il n'y a pas de séquence qui décrie l'expression régulière"
       case (Decrite, _) :: _       => "Il y a une séquence qui décrie l'expression régulière"
+      case (NonDecrite, _) :: list => messageResultat(list)
     }
   }
 

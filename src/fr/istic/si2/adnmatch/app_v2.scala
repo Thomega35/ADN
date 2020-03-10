@@ -30,16 +30,15 @@ object ADNMatchV2 extends App {
     println()
     println("╔═══════════════════════════════════════════════════════╗")
     println("║ Veiller saisir une expression régulière               ║")
-    println("║ Taper `quit` pour quitter l'application               ║")
+    println("║ Taper \"Quit\" pour quitter l'application               ║")
     println("╚═══════════════════════════════════════════════════════╝")
     val input = scanner.nextLine()
     input match {
-      case "quit" => println("\nFin de programme\nADNMatch Version 2\n")
+      case "quit" | "Quit" | "q" => println("\nFin de programme\nADNMatch Version 2\n")
       case _ => {
         litRExp(input) match {
           case Some(rexp) => {
             print(s"Voici un déroulement possible de ${rExpToString(rexp)} : ")
-
             deroule(rexp) match {
               case None       => println("-Expression impossibe-\n")
               case Some(list) => println(s"${listeBasesToString(list)}\n")
@@ -68,7 +67,5 @@ object ADNMatchV2 extends App {
       }
     }
   }
-  //mainLoop()
-  
-  println(messageResultat((Decrite, T)::(NonDecrite,G)::(Decrite, A)::(Decrite, C)::(NonDecrite, T)::Nil))
+  mainLoop()
 }
