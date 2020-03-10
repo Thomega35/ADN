@@ -13,8 +13,22 @@ object SequencesImages {
    * @return une liste contenant des sous-listes de lmb, toutes de taille tligne, sauf la dernière qui
    *         peut être de taille inférieure.
    */
-  // TODO V3
-  def lignes(lmb: List[(Marqueur, Base)], tligne: Int): List[List[(Marqueur, Base)]] = ???
+  def lignes(lmb: List[(Marqueur, Base)], tligne: Int): List[List[(Marqueur, Base)]] = {
+
+  }
+
+  def calcLigne(lmb: List[(Marqueur, Base)], tligne: Int): List[(Marqueur, Base)] = {
+    tligne match {
+      case 0 => Nil
+      case _ =>
+        lmb match {
+          case Nil              => Nil
+          case (marqueur, base) :: list => (marqueur,base) :: calcLigne(list, tligne-1)
+        }
+    }
+  }
+  
+  def supprLigne(lmb: List[(Marqueur, Base)], tligne: Int) =
 
   /**
    * Taille du texte à utiliser pour représenter

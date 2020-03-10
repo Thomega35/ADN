@@ -228,9 +228,9 @@ object RExpMatcher {
    *         une non-correspondance
    */
   def annulerResultat(lb: List[(Marqueur, Base)]): List[(Marqueur, Base)] = {
-    lb match{
-      case Nil          => Nil
-      case (_,a) :: b => (NonDecrite,a) :: annulerResultat(b)
+    lb match {
+      case Nil               => Nil
+      case (_, base) :: list => (NonDecrite, base) :: annulerResultat(list)
     }
   }
 
@@ -238,7 +238,11 @@ object RExpMatcher {
    * @param lbm une liste de bases azotées marquées
    * @return la liste des bases de lbm dont on a oublié les marqueurs, en conservant l'ordre
    */
-  // TODO V3
-  def sansMarqueurs(lbm: List[(Marqueur, Base)]): List[Base] = ???
+  def sansMarqueurs(lbm: List[(Marqueur, Base)]): List[Base] = {
+    lbm match {
+      case Nil                     => Nil
+      case (marqueur, base) :: list => base :: sansMarqueurs(list)
+    }
+  }
 
 }
