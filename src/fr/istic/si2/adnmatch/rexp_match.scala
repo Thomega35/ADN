@@ -40,8 +40,9 @@ object RExpMatcher {
       case Repete(rexp) => simplifiedConcat(derivee(rexp, b), Repete(rexp))
       case NFois(rexp, n) => {
         n match {
-          case 1 | 0 => NFois(derivee(rexp, b), n)
-          case _     => simplifiedConcat(derivee(rexp, b), NFois(rexp, n - 1))
+          case 0 => Impossible
+          case 1 => derivee(rexp, b)
+          case _ => simplifiedConcat(derivee(rexp, b), NFois(rexp, n - 1))
         }
       }
     }
@@ -50,7 +51,7 @@ object RExpMatcher {
   /**
    * @param rexp1 une expression régulière
    * @param rexp2 une expression régulière
-   * @return RExp le choix simplifier des deux expression si possible
+   * @return RExp le choix simplifié des deux expressions si possible
    */
   def simplifiedChoix(rexp1: RExp, rexp2: RExp): RExp = {
     (rexp1, rexp2) match {
@@ -63,7 +64,7 @@ object RExpMatcher {
   /**
    * @param rexp1 une expression régulière
    * @param rexp2 une expression régulière
-   * @return RExp la concaténation simplifier des deux expression si possible
+   * @return RExp la concaténation simplifiée des deux expression si possible
    */
   def simplifiedConcat(rexp1: RExp, rexp2: RExp): RExp = {
     (rexp1, rexp2) match {
@@ -76,7 +77,7 @@ object RExpMatcher {
 
   /**
    * @param e une expression régulière
-   * @return Boolean e décrit la séquence vide ou impossible
+   * @return Boolean e décrit la séquence vide
    */
   def isRExpEmpty(e: RExp): Boolean = {
     e match {
@@ -84,8 +85,8 @@ object RExpMatcher {
       case Vide                          => true
       case Choix(rexp1, rexp2) =>
         (isRExpEmpty(rexp1), isRExpEmpty(rexp2)) match {
-          case (true, true) => true
-          case _            => false
+          case (false, false) => false
+          case _              => true
         }
       case Concat(rexp1, rexp2) =>
         (isRExpEmpty(rexp1), isRExpEmpty(rexp2)) match {
@@ -144,13 +145,13 @@ object RExpMatcher {
       case Concat(rexp1, rexp2)                             => getFirstRExp(rexp1)
     }
   }
-  
-  def getNotFirstRExp(e: RExp): RExp = {
+
+  def getNotFirstRExp(e: RExp): RExp = ??? /*{
     e match {
-      
+
     }
-  }
-  
+  }*/
+
   /**
    * @param e une expression régulière
    * @param lb une liste de bases azotées

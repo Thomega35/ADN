@@ -36,7 +36,7 @@ object FonctionsRExp {
   def listeBasesToString(lb: List[Base]): String = {
     lb match {
       case Nil          => ""
-      case base :: list => base.toString() + listeBasesToString(list)
+      case base :: list => base + listeBasesToString(list)
     }
   }
 
@@ -51,7 +51,7 @@ object FonctionsRExp {
       case Nqb                  => "."
       case UneBase(base)        => base.toString()
       case Choix(rexp1, rexp2)  => s"(${rExpToString(rexp1)}|${rExpToString(rexp2)})"
-      case Concat(rexp1, rexp2) => s"${rExpToString(rexp1)}${rExpToString(rexp2)}"
+      case Concat(rexp1, rexp2) => rExpToString(rexp1) + rExpToString(rexp2)
       case Repete(rexp)         => s"${rExpToString(rexp)}*"
       case NFois(rexp, n)       => s"(${rExpToString(rexp)}){$n}"
     }

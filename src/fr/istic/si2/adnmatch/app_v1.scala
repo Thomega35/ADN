@@ -27,12 +27,12 @@ object ADNMatchV1 extends App {
    */
   def mainLoop(): Unit = {
     println("╔═══════════════════════════════════════════════════════╗")
-    println("║ Veiller saisir une expression régulière               ║")
-    println("║ Taper `quit` pour quitter l'application               ║")
+    println("║ Veuiller saisir une expression régulière              ║")
+    println("║ Taper \"quit\" pour quitter l'application               ║")
     println("╚═══════════════════════════════════════════════════════╝")
     val input = scanner.nextLine()
     input match {
-      case "quit" => println("\nFin de programme\nADNMatch Version 1\n")
+      case "quit" | "Quit" | "q" => println("\nFin de programme\nADNMatch Version 1\n")
       case _ => {
         litRExp(input) match {
           case Some(rexp) => {
@@ -42,7 +42,7 @@ object ADNMatchV1 extends App {
               case Some(list) => println(s"${listeBasesToString(list)}\n")
             }
           }
-          case None => println("Mauvaise expression, recommencez")
+          case None => println("Mauvaise expression, recommencez\n")
         }
         mainLoop()
       }
