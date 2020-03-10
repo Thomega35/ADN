@@ -227,8 +227,12 @@ object RExpMatcher {
    * @return liste des mêmes bases que lb, mais où tous les marqueurs indiquent
    *         une non-correspondance
    */
-  // TODO V3
-  def annulerResultat(lb: List[(Marqueur, Base)]): List[(Marqueur, Base)] = ???
+  def annulerResultat(lb: List[(Marqueur, Base)]): List[(Marqueur, Base)] = {
+    lb match{
+      case Nil          => Nil
+      case (_,a) :: b => (NonDecrite,a) :: annulerResultat(b)
+    }
+  }
 
   /**
    * @param lbm une liste de bases azotées marquées
