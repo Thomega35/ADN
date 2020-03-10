@@ -23,14 +23,14 @@ object ADNMatchV2 extends App {
   val scanner = new Scanner(System.in)
 
   /**
-   * Application qui permet de saisir, afficher, dérouler, comparer 
-   * une expression RExp autant de fois qu'on le souhaite
+   * Application qui permet de saisir, afficher, dérouler, comparer
+   * une expression RExp à une séquence
    */
   def isRExpEqualSeq(): Unit = {
     println()
     println("╔════════════════════════════════════════════╗")
-    println("║  Veiller saisir une expression régulière.  ║")
-    println("║ Taper \"Quit\" pour quitter l'application. ║")
+    println("║ Veiller saisir une expression régulière.   ║")
+    println("║ Taper \"Quit\" pour quitter l'application.   ║")
     println("╚════════════════════════════════════════════╝")
     val input = scanner.nextLine()
     input match {
@@ -44,7 +44,7 @@ object ADNMatchV2 extends App {
             }
             println("╔══════════════════════════════════════════════════════╗")
             println("║ Veiller saisir une séquence de bases (A, T, C ou G)  ║")
-            println("║        à comparer avec l'expression régulière.       ║")
+            println("║        à comparer avec l'expression régulière        ║")
             println("╚══════════════════════════════════════════════════════╝")
             lireSequence() match {
               case None => { println("Séquence de bases non valide, opération annulé"); mainLoop() }
@@ -66,7 +66,37 @@ object ADNMatchV2 extends App {
     }
   }
 
-  def seqAnalysis(): Unit = ???
+  def seqAnalysis(): Unit = {
+    println()
+    println("╔════════════════════════════════════════════╗")
+    println("║ Veiller saisir une expression régulière.   ║")
+    println("║ Taper \"Quit\" pour quitter l'application.   ║")
+    println("╚════════════════════════════════════════════╝")
+    val input = scanner.nextLine()
+    input match {
+      case _ => {
+        litRExp(input) match {
+          case Some(rexp) => {
+            print(s"Voici un déroulement possible de ${rExpToString(rexp)} : ")
+            deroule(rexp) match {
+              case None       => println("-Expression impossibe-\n")
+              case Some(list) => println(s"${listeBasesToString(list)}\n")
+            }
+            println("╔══════════════════════════════════════════════════════╗")
+            println("║ Veiller saisir une séquence de bases (A, T, C ou G)  ║")
+            println("║        à analyser avec l'expression régulière        ║")
+            println("╚══════════════════════════════════════════════════════╝")
+            lireSequence() match {
+              case None       => { println("Séquence de bases non valide, opération annulé"); mainLoop() }
+              case Some(list) => println(s"\n${messageResultat(tousLesMatchs(rexp, list))}")
+            }
+          }
+          case None => println("Mauvaise expression, recommencez")
+        }
+        mainLoop()
+      }
+    }
+  }
 
   def mainLoop(): Unit = {
     println()
