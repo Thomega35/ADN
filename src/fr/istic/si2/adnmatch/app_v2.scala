@@ -26,7 +26,7 @@ object ADNMatchV2 extends App {
    * Application qui permet de saisir, afficher puis dérouler
    * une expression RExp autant de fois qu'on le souhaite
    */
-  def mainLoop(): Unit = {
+  def isRExpEqualSeq(): Unit = {
     println()
     println("╔═══════════════════════════════════════════════════════╗")
     println("║ Veiller saisir une expression régulière               ║")
@@ -34,7 +34,6 @@ object ADNMatchV2 extends App {
     println("╚═══════════════════════════════════════════════════════╝")
     val input = scanner.nextLine()
     input match {
-      case "quit" | "Quit" | "q" => println("\nFin de programme\nADNMatch Version 2\n")
       case _ => {
         litRExp(input) match {
           case Some(rexp) => {
@@ -65,6 +64,24 @@ object ADNMatchV2 extends App {
         }
         mainLoop()
       }
+    }
+  }
+
+  def seqAnalysis(): Unit = ???
+
+  def mainLoop(): Unit = {
+    println()
+    println("╔═══════════════════════════════════════════════════════════════════════╗")
+    println("║ Entrer \"C\" pour comparer une expression régulière avec une séquence   ║")
+    println("║ Entrer \"R\" pour rechercher une expression régulière dans une séquence ║")
+    println("║ Entrer \"Quit\" pour quitter l'application                              ║")
+    println("╚═══════════════════════════════════════════════════════════════════════╝")
+    val input = scanner.nextLine()
+    input match {
+      case "quit" | "Quit" | "q" => println("\nFin de programme\nADNMatch Version 2\n")
+      case "c" | "C"             => isRExpEqualSeq()
+      case "r" | "R"             => seqAnalysis()
+      case _                     => { println("Entrée non reconnue, veuiller recommencer"); mainLoop() }
     }
   }
   mainLoop()
