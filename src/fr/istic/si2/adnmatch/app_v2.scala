@@ -23,15 +23,15 @@ object ADNMatchV2 extends App {
   val scanner = new Scanner(System.in)
 
   /**
-   * Application qui permet de saisir, afficher puis dérouler
+   * Application qui permet de saisir, afficher, dérouler, comparer 
    * une expression RExp autant de fois qu'on le souhaite
    */
   def mainLoop(): Unit = {
     println()
-    println("╔═══════════════════════════════════════════════════════╗")
-    println("║ Veiller saisir une expression régulière               ║")
-    println("║ Taper \"Quit\" pour quitter l'application               ║")
-    println("╚═══════════════════════════════════════════════════════╝")
+    println("╔════════════════════════════════════════════╗")
+    println("║  Veiller saisir une expression régulière.  ║")
+    println("║ Taper \"Quit\" pour quitter l'application. ║")
+    println("╚════════════════════════════════════════════╝")
     val input = scanner.nextLine()
     input match {
       case "quit" | "Quit" | "q" => println("\nFin de programme\nADNMatch Version 2\n")
@@ -43,15 +43,14 @@ object ADNMatchV2 extends App {
               case None       => println("-Expression impossibe-\n")
               case Some(list) => println(s"${listeBasesToString(list)}\n")
             }
-
-            println("╔═══════════════════════════════════════════════════════╗")
-            println("║ Veiller saisir une séquence de bases (A, T, C ou G)   ║")
-            println("╚═══════════════════════════════════════════════════════╝")
-
+            println("╔══════════════════════════════════════════════════════╗")
+            println("║ Veiller saisir une séquence de bases (A, T, C ou G)  ║")
+            println("║        à comparer avec l'expression régulière.       ║")
+            println("╚══════════════════════════════════════════════════════╝")
             lireSequence() match {
               case None => { println("Séquence de bases non valide, opération annulé"); mainLoop() }
               case Some(list) => {
-                println(s"Analyse de l'expression régulière `${rExpToString(rexp)}` sur la séquence `${listeBasesToString(list)}`")
+                println(s"Analyse de l'expression régulière ''${rExpToString(rexp)}'' sur la séquence ''${listeBasesToString(list)}''")
 
                 matchComplet(rexp, list) match {
                   case true  => println("✔ L'expression régulière correspond bien à la séquence saisie")
