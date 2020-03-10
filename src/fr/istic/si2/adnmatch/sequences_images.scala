@@ -14,21 +14,44 @@ object SequencesImages {
    *         peut être de taille inférieure.
    */
   def lignes(lmb: List[(Marqueur, Base)], tligne: Int): List[List[(Marqueur, Base)]] = {
-
+    lmb match {
+      case Nil          => Nil
+      case base :: list => calcLigne(lmb, tligne) :: lignes(supprLigne(calcLigne(lmb, tligne), lmb), tligne)
+    }
   }
 
+  /**
+   * @param lmb une liste de bases marquées
+   * @param tligne entier strictement positif, représentant la taille d'une ligne en nombre de bases marquées
+   * @return une liste contenant les éléments de la première ligne
+   */
   def calcLigne(lmb: List[(Marqueur, Base)], tligne: Int): List[(Marqueur, Base)] = {
     tligne match {
       case 0 => Nil
       case _ =>
         lmb match {
-          case Nil              => Nil
-          case (marqueur, base) :: list => (marqueur,base) :: calcLigne(list, tligne-1)
+          case Nil                      => Nil
+          case (marqueur, base) :: list => (marqueur, base) :: calcLigne(list, tligne - 1)
         }
     }
   }
-  
-  def supprLigne(lmb: List[(Marqueur, Base)], tligne: Int) =
+
+  /**
+   * @param pref une liste de de bases marquées *préfixe* de lmb
+   * @param lmb une liste de bases marquées
+   * @return la sous-liste de lmb située après le préfixe pref
+   */
+  def supprLigne(pref: List[(Marqueur, Base)], lmb: List[(Marqueur, Base)]): List[(Marqueur, Base)] = {
+    pref match {
+      case Nil => lmb
+      case base1 :: list1 => {
+        lmb match {
+          case Nil            => Nil
+          case base2 :: list2 => supprLigne(list1, list2)
+        }
+      }
+    }
+  }
 
   /**
    * Taille du texte à utiliser pour représenter
@@ -40,8 +63,12 @@ object SequencesImages {
    * @param mb une base azotée marquée
    * @return une image représentant la base avec son marqueur visuel
    */
-  // TODO V3
-  def marqueurBaseToImage(mb: (Marqueur, Base)): Image = ???
+  def marqueurBaseToImage(mb: (Marqueur, Base)): Image = {
+    mb._1 match {
+      case Decrite    => base.ToString()
+      case NonDecrite =>
+    }
+  }
 
   /**
    * @param ligne une liste de bases azotées marquées
