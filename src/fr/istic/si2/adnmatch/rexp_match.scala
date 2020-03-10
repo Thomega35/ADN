@@ -135,7 +135,7 @@ object RExpMatcher {
 
   /**
    * @param e une expression régulière
-   * @return l'expression régulière qui correspond au préfixe de la séquence
+   * @return le préfixe de l'expression régulière e
    */
   def getFirstRExp(e: RExp): RExp = {
     e match {
@@ -146,12 +146,6 @@ object RExpMatcher {
     }
   }
 
-  def getNotFirstRExp(e: RExp): RExp = ??? /*{
-    e match {
-
-    }
-  }*/
-
   /**
    * @param e une expression régulière
    * @param lb une liste de bases azotées
@@ -159,16 +153,28 @@ object RExpMatcher {
    */
   def prefixeMatch(e: RExp, lb: List[Base]): Option[List[Base]] = {
     lb match {
-      case Nil => None
-      case base :: list => {
-        derivee(getFirstRExp(e), base) match {
-          case Vide | Repete(UneBase(`base`)) => Some(List(base))
-          case _                              => None
+      case Nil =>  
+        matchComplet(e, Nil) match {
+          case true  => Some(Nil)
+          case false => None
+        } 
+      case _ :: _ => {
+        matchComplet(e, lb) match {
+          case true  => Some(lb)
+          case false => prefixeMatch(e,supprDernierElement(lb))
         }
       }
     }
   }
 
+  def supprDernierElement(lb : List[Base]): List[Base] = {
+    lb match {
+      case Nil | _ :: Nil => Nil
+      case base :: list   => base :: supprDernierElement(list)
+    }
+  }
+  
+  
   /**
    * @param pref une liste de bases azotées *préfixe* de lb
    * @param lb une liste de bases azotées
@@ -197,10 +203,9 @@ object RExpMatcher {
     lb match {
       case Nil => Nil
       case base :: list => {
-        prefixeMatch(e, List(base)) match {
-          case None          => (NonDecrite, base) :: tousLesMatchs(e, list)
-          //TODO pas fini !!!
-          case Some(subList) => ??? //On continue a tester pour les autres
+        prefixeMatch(e, lb) match {
+          case None => (NonDecrite, base) :: tousLesMatchs(e, list)
+          case Some(subList) => sequenceDecrite(subList) ++ tousLesMatchs(e, suppPrefixe(subList, lb))
         }
       }
     }
@@ -211,15 +216,10 @@ object RExpMatcher {
    * @return une description textuelle du résultat pour l'utilisateur
    */
   def messageResultat(lbm: List[(Marqueur, Base)]): String = {
-    var info: String =
-      "(Les sous-séquences ci-dessus comprises entre [ et ] sont les séquences qui correspondes à l'expression régulière)\n"
     lbm match {
-      case Nil => s""
-      case (_, base) :: Nil => s"${base.toString()}\n$info"
-      case (Decrite, base1) :: (Decrite, base2) :: list => s"$base1${messageResultat((Decrite, base2) :: list)} "
-      case (NonDecrite, base1) :: (NonDecrite, base2) :: list => s"$base1${messageResultat((NonDecrite, base2) :: list)} "
-      case (NonDecrite, base1) :: (Decrite, base2) :: list => s"$base1[${messageResultat((Decrite, base2) :: list)} "
-      case (Decrite, base1) :: (NonDecrite, base2) :: list => s"$base1]${messageResultat((NonDecrite, base2) :: list)} "
+      case (NonDecrite, _) :: list => messageResultat(list)
+      case Nil                     => "Il n'y a pas de séquence qui décrie l'expression régulière"
+      case (Decrite, _) :: _       => "Il y a une séquence qui décrie l'expression régulière"
     }
   }
 

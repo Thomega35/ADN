@@ -23,6 +23,7 @@ class ADNMatchTest {
   val list1: List[Base] = A :: G :: G :: Nil
   val listStr1: String = "AGG"
   val deriveeRexp1A: RExp = NFois(Choix(Impossible, UneBase(G)), 2)
+  val listdecrite1: List[(Marqueur,Base)] = (Decrite,A) :: (Decrite,G) :: (Decrite,G) :: Nil
 
   // Avec Impossible
   val rexp2: RExp = Concat(Concat(UneBase(G), Repete(Nqb)), NFois(Impossible, 3))
@@ -31,7 +32,7 @@ class ADNMatchTest {
   val list2: List[Base] = Nil
   val listStr2: String = ""
   val deriveeRexp2G: RExp = Concat(Repete(Nqb), NFois(Impossible, 3))
-
+    
   // Simple
   val rexp3: RExp = Concat(Concat(Concat(UneBase(T), UneBase(C)), UneBase(A)), UneBase(G))
   val rexpStr3: String = "TCAG"
@@ -282,13 +283,33 @@ class ADNMatchTest {
   }
 
   /**
+   * Test de la fonction      matchComplet()
+   * avec comme paramètre(s)  Concat(Repete(UneBase(A)),UneBase(C)), A :: A :: C :: Nil
+   * resultat attendu(s)      true
+   */
+  @Test
+  def testMatchComplet5() {
+    assertEquals(true, matchComplet(Concat(Repete(UneBase(A)), UneBase(C)), A :: A :: C :: Nil))
+  }
+
+  /**
+   * Test de la fonction      matchComplet()
+   * avec comme paramètre(s)  Concat(Repete(UneBase(A)),UneBase(C)), A :: A :: C :: Nil
+   * resultat attendu(s)      true
+   */
+  @Test
+  def testMatchComplet6() {
+    assertEquals(true, matchComplet(Repete(UneBase(A)), Nil))
+  }
+  
+  /**
    * Test de la fonction      prefixeMatch()
    * avec comme paramètre(s)  Concat(UneBase(A), UneBase(T)), List(A, G, G)
    * resultat attendu(s)      Some(List(A))
    */
   @Test
   def testPrefixeMatch1() {
-    assertEquals(Some(List(A)), prefixeMatch(Concat(UneBase(A), UneBase(T)), List(A, G, G)))
+    assertEquals(None, prefixeMatch(Concat(UneBase(A), UneBase(T)), List(A, G, G)))
   }
 
   /**
@@ -298,7 +319,7 @@ class ADNMatchTest {
    */
   @Test
   def testPrefixeMatch2() {
-    assertEquals(Some(List(A)), prefixeMatch(Concat(Nqb, UneBase(T)), List(A, G, G)))
+    assertEquals(Some(List(A,G)), prefixeMatch(Concat(Nqb, UneBase(G)), List(A, G, G)))
   }
 
   /**
@@ -308,7 +329,7 @@ class ADNMatchTest {
    */
   @Test
   def testPrefixeMatch3() {
-    assertEquals(Some(List(A)), prefixeMatch(Concat(Repete(UneBase(A)), UneBase(T)), List(A, G, G)))
+    assertEquals(Some(List(A)), prefixeMatch(Concat(UneBase(A),Repete(UneBase(T))), List(A, G, G)))
   }
 
   /**
@@ -318,7 +339,7 @@ class ADNMatchTest {
    */
   @Test
   def testPrefixeMatch4() {
-    assertEquals(None, prefixeMatch(Concat(Repete(UneBase(A)), UneBase(T)), List(G, G, G)))
+    assertEquals(Some(Nil), prefixeMatch(Repete(UneBase(A)), List(G, G, G)))
   }
 
   /**
@@ -328,7 +349,7 @@ class ADNMatchTest {
    */
   @Test
   def testPrefixeMatch5() {
-    assertEquals(Some(List(A)), prefixeMatch(Concat(NFois(UneBase(A), 3), UneBase(T)), List(A, A, A, G, G)))
+    assertEquals(Some(List(A, A, A)), prefixeMatch(NFois(UneBase(A), 3), List(A, A, A, T)))
   }
 
   /**
@@ -349,5 +370,25 @@ class ADNMatchTest {
   @Test
   def testSuppPrefixe2() {
     assertEquals(List(A, T, C, G), suppPrefixe(List(), List(A, T, C, G)))
+  }
+  
+  /**
+   * Test de la fonction      suppPrefixe()
+   * avec comme paramètre(s)  List(), List(A, T, C, G)
+   * resultat attendu(s)      List(A, T, C, G)
+   */
+  @Test
+  def testTousLesMatchs1() {
+     assertEquals(List((NonDecrite,C),(Decrite,A),(NonDecrite,G)),tousLesMatchs(UneBase(A), List(C,A,G)))
+  }
+  
+  /**
+   * Test de la fonction      suppPrefixe()
+   * avec comme paramètre(s)  List(), List(A, T, C, G)
+   * resultat attendu(s)      List(A, T, C, G)
+   */
+  @Test
+  def testTousLesMatchs2() {
+     assertEquals(List((NonDecrite,C),(Decrite,A),(NonDecrite,G)),tousLesMatchs(UneBase(A), List(C,A,G)))
   }
 }
