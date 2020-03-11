@@ -65,8 +65,8 @@ object SequencesImages {
    */
   def marqueurBaseToImage(mb: (Marqueur, Base)): Image = {
     mb._1 match {
-      case Decrite    => base.ToString()
-      case NonDecrite =>
+      case Decrite    => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), GREEN), GREEN)
+      case NonDecrite => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), RED), RED)
     }
   }
 
@@ -74,8 +74,12 @@ object SequencesImages {
    * @param ligne une liste de bases azotées marquées
    * @return une image représentant les bases marquées de ligne, dans l'ordre, toutes sur la même ligne
    */
-  // TODO V3
-  def imageUneLigne(ligne: List[(Marqueur, Base)]): Image = ???
+  def imageUneLigne(ligne: List[(Marqueur, Base)]): Image = {
+    ligne match {
+      case Nil           => Empty
+      case basem :: list => Beside(marqueurBaseToImage(basem),imageUneLigne(list))
+    }
+  }
 
   /**
    * @param llignes une liste de listes de bases azotées marquées
@@ -83,7 +87,11 @@ object SequencesImages {
    *         Chaque élément de llignes est sur une ligne distincte.
    *         Les lignes sont visualisées les unes en dessous des autres.
    */
-  // TODO V3
-  def imagePlusieursLignes(llignes: List[List[(Marqueur, Base)]]): Image = ???
+  def imagePlusieursLignes(llignes: List[List[(Marqueur, Base)]]): Image = {
+    llignes match{
+      case Nil           => Empty
+      case ligne :: list => On(imageUneLigne(ligne),imagePlusieursLignes(list))
+    }
+  }
 
 }
