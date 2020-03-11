@@ -77,7 +77,7 @@ object SequencesImages {
   def imageUneLigne(ligne: List[(Marqueur, Base)]): Image = {
     ligne match {
       case Nil           => Empty
-      case basem :: list => Beside(marqueurBaseToImage(basem),imageUneLigne(list))
+      case basem :: list => beside(marqueurBaseToImage(basem),imageUneLigne(list))
     }
   }
 
@@ -90,7 +90,7 @@ object SequencesImages {
   def imagePlusieursLignes(llignes: List[List[(Marqueur, Base)]]): Image = {
     llignes match{
       case Nil           => Empty
-      case ligne :: list => On(imageUneLigne(ligne),imagePlusieursLignes(list))
+      case ligne :: list => rotate(beside(rotate(imageUneLigne(ligne),90),rotate(imagePlusieursLignes(list),90)),-90)
     }
   }
 
