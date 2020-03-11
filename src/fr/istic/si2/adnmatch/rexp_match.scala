@@ -167,6 +167,10 @@ object RExpMatcher {
     }
   }
 
+  /**
+  * @param lb une liste de bases
+  * @return la liste lb sans le dernier element
+  */
   def supprDernierElement(lb: List[Base]): List[Base] = {
     lb match {
       case Nil | _ :: Nil => Nil
