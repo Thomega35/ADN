@@ -139,15 +139,33 @@ object ADNMatchUniverse extends Universe[Etat] {
   val fontsize: Int = 20
   val msgSize: Float = 1.1f * fontsize
   val seqSize: Float = 0.9f * HEIGHT
+  
+  //Themes
+  
+  //Bleu Foncé
+  //val primaryColor: Color = Color(81,43,88,255)
+  //val secondaryColor: Color = Color(254,52,110,255)
+  //val terciaryColor: Color = Color(44,0,62,255)
+  //val textColor: Color = Color(210,250,251,255)
+
+  //Vert
+  //val primaryColor: Color = Color(85, 34, 68, 255)
+  //val secondaryColor: Color = Color(89, 97, 87, 255)
+  //val terciaryColor: Color = Color(91, 140, 90, 255)
+  //val textColor: Color = Color(207, 209, 134, 255)
+  
+  //Pale
+  val primaryColor: Color = Color(255, 213, 229, 255)
+  val secondaryColor: Color = Color(255, 255, 221, 255)
+  val terciaryColor: Color = Color(160, 255, 230, 255)
+  val textColor: Color = Color(66, 79, 170, 255)
 
   /**
    * @param c une couleur
    * @return une image pour séparer les différentes zones de la fenêtre graphique
    */
   def sep(c: Color): Image = {
-    Below(
-      FillColor(LineColor(Rectangle(WIDTH, (HEIGHT - seqSize - (3 * msgSize)) / 2), c), c),
-      Rectangle(WIDTH, 1))
+    FillColor(LineColor(Rectangle(WIDTH, (HEIGHT - seqSize - (3 * msgSize)) / 2), c), c)
   }
 
   /**
@@ -180,7 +198,7 @@ object ADNMatchUniverse extends Universe[Etat] {
       FillColor(Text(t, fontsize), front),
       FillColor(LineColor(Rectangle(WIDTH, msgSize), back), back))
     if (descr) {
-      description("Message:", msg, front, back)
+      description("  Message:", msg, front, back)
     } else {
       msg
     }
@@ -191,15 +209,14 @@ object ADNMatchUniverse extends Universe[Etat] {
    * @return une image illustrant lmb, avec des lignes de tligne bases
    */
   def sequence(lmb: List[(Marqueur, Base)]): Image = {
-    val GREY: Color = Color(0, 0, 0, 30)
     description(
-      "Séquence chargée:",
+      "   Séquence chargée:",
       OnAlign(
         Top,
         imagePlusieursLignes(lignes(lmb, tligne)),
-        FillColor(LineColor(Rectangle(WIDTH, seqSize), GREY), GREY)),
-      BLACK,
-      GREY)
+        FillColor(LineColor(Rectangle(WIDTH, seqSize), primaryColor), primaryColor)),
+      textColor,
+      primaryColor)
   }
 
   /**
@@ -208,9 +225,9 @@ object ADNMatchUniverse extends Universe[Etat] {
    */
   def imageRExp(re: RExp): Image = {
     description(
-      "Expression régulière recherchée:",
-      message(rExpToString(re), false, GREEN, BLACK),
-      GREEN, BLACK)
+      "   Expression régulière recherchée:",
+      message(rExpToString(re), false, textColor, secondaryColor),
+      textColor, secondaryColor)
   }
 
   /**
@@ -223,7 +240,13 @@ object ADNMatchUniverse extends Universe[Etat] {
    *         - la liste de bases marquées lmb
    */
   def cadre(t: String, re: RExp, lmb: List[(Marqueur, Base)]): Image = {
-    below(message(t, true, WHITE, BLUE), sep(BLUE), imageRExp(re), sep(BLACK), sequence(lmb))
+    below(
+      sep(terciaryColor),
+      message(t, true, textColor, terciaryColor),
+      sep(terciaryColor), sep(secondaryColor),
+      imageRExp(re), sep(secondaryColor),
+      sep(primaryColor),
+      sequence(lmb))
   }
 
 }

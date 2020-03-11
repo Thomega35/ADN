@@ -58,6 +58,8 @@ object SequencesImages {
    * graphiquement les bases azotées.
    */
   val fontSizeBase: Int = 14
+  val textColorDecrite: Color = Color(66, 79, 170, 255)
+  val textColorNonDecrite: Color = Color(66, 79, 170, 150)
 
   /**
    * @param mb une base azotée marquée
@@ -65,8 +67,10 @@ object SequencesImages {
    */
   def marqueurBaseToImage(mb: (Marqueur, Base)): Image = {
     mb._1 match {
-      case Decrite    => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), GREEN), GREEN)
-      case NonDecrite => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), RED), RED)
+      case Decrite => on(
+        lineColor(fillColor(Rectangle(10, fontSizeBase), Color(255, 57, 110, 120)), Color(0,0,0,0)),
+        lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorDecrite), textColorDecrite))
+      case NonDecrite => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorNonDecrite), textColorNonDecrite)
     }
   }
 
@@ -77,7 +81,7 @@ object SequencesImages {
   def imageUneLigne(ligne: List[(Marqueur, Base)]): Image = {
     ligne match {
       case Nil           => Empty
-      case basem :: list => beside(marqueurBaseToImage(basem),imageUneLigne(list))
+      case basem :: list => beside(marqueurBaseToImage(basem), imageUneLigne(list))
     }
   }
 
@@ -88,9 +92,9 @@ object SequencesImages {
    *         Les lignes sont visualisées les unes en dessous des autres.
    */
   def imagePlusieursLignes(llignes: List[List[(Marqueur, Base)]]): Image = {
-    llignes match{
+    llignes match {
       case Nil           => Empty
-      case ligne :: list => rotate(beside(rotate(imageUneLigne(ligne),90),rotate(imagePlusieursLignes(list),90)),-90)
+      case ligne :: list => below(imageUneLigne(ligne), imagePlusieursLignes(list))
     }
   }
 
