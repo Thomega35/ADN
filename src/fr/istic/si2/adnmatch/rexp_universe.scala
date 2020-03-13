@@ -109,7 +109,6 @@ object ADNMatchUniverse extends Universe[Etat] {
 
       // Arrêter l'application : possible à tout moment
       case (_, KeyPressed(KeyAscii('q'))) => End
-
       case _                              => s
     }
   }

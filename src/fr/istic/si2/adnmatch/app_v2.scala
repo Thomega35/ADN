@@ -23,8 +23,8 @@ object ADNMatchV2 extends App {
   val scanner = new Scanner(System.in)
 
   /**
-   * Application qui permet de saisir, afficher, dérouler, comparer
-   * une expression RExp à une séquence
+   * Application qui permet de saisir, afficher, dérouler une expression RExp
+   * et de la comparer à une séquence de bases
    */
   def isRExpEqualSeq(): Unit = {
     println()
@@ -40,7 +40,7 @@ object ADNMatchV2 extends App {
           case Some(list) => println(s"${listeBasesToString(list)}\n")
         }
         println("╔══════════════════════════════════════════════════════╗")
-        println("║ Veiller saisir une séquence de bases (A, T, C ou G)  ║")
+        println("║ Veuiller saisir une séquence de bases (A, T, C ou G)  ║")
         println("║        à comparer avec l'expression régulière        ║")
         println("╚══════════════════════════════════════════════════════╝")
         lireSequence() match {

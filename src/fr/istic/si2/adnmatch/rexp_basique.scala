@@ -61,9 +61,9 @@ object FonctionsRExp {
    * @param e une expression régulière
    * @return une liste de bases obtenue en déroulant e tout le temps de la même manière.
    * @note
-   * si il y a un choix, on rend le premier élément si il n'est pas Impossible sinon le second
-   * si il y a répétition, on rend 2 fois l'élément
-   * si il y a Nqb, on rend la base A
+   * Si il y a un choix, on rend le premier élément si il n'est pas Impossible, sinon le second élément
+   * Si il y a répétition, on rend 2 fois l'élément
+   * Si il y a Nqb, on rend la base A
    */
   def deroule(e: RExp): Option[List[Base]] = {
     e match {

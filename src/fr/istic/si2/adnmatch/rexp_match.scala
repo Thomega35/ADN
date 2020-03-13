@@ -65,7 +65,7 @@ object RExpMatcher {
   /**
    * @param rexp1 une expression régulière
    * @param rexp2 une expression régulière
-   * @return RExp la concaténation simplifiée des deux expression si possible
+   * @return RExp la concaténation simplifiée des deux expressions si possible
    */
   def simplifiedConcat(rexp1: RExp, rexp2: RExp): RExp = {
     (rexp1, rexp2) match {
@@ -188,7 +188,7 @@ object RExpMatcher {
   /**
    * @param e une expression régulière
    * @param lb une liste de bases
-   * @return une liste  (m1, base1)::...::(mN,baseN)::Nil, qui marque,
+   * @return une liste  (m1, base1) :: ... :: (mN,baseN) :: Nil, qui marque,
    *         base après base, les sous-listes de lb décrites par e.
    *         Les basei sont les bases de lb dans l'ordre.
    */
@@ -208,7 +208,7 @@ object RExpMatcher {
    * @param e une expression régulière
    * @param lb une liste de bases
    * @param isBis boolean qui alterne entre les sous séquences
-   * @return une liste  (m1, base1)::...::(mN,baseN)::Nil, qui marque, de façon alternée
+   * @return une liste  (m1, base1) :: ... :: (mN,baseN) :: Nil, qui marque, de façon alternée
    *         base après base, les sous-listes de lb décrites par e.
    *         Les basei sont les bases de lb dans l'ordre.
    */
