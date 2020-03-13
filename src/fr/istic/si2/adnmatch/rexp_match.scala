@@ -9,6 +9,7 @@ import fr.istic.si2.adnmatch.FonctionsRExp._
  * indiquant les résultats de recherche.
  */
 sealed trait Marqueur
+case object DecriteBis extends Marqueur
 case object Decrite extends Marqueur
 case object NonDecrite extends Marqueur
 
@@ -125,6 +126,18 @@ object RExpMatcher {
   /**
    * @param lb une liste de bases azotées
    * @return la liste des bases de lb, dans l'ordre, marquées pour indiquer
+   *         que la totalité de lb est décrite (avec le marqueur DecriteBis)
+   */
+  def sequenceDecriteBis(lb: List[Base]): List[(Marqueur, Base)] = {
+    lb match {
+      case Nil          => Nil
+      case base :: list => (DecriteBis, base) :: sequenceDecriteBis(list)
+    }
+  }
+
+  /**
+   * @param lb une liste de bases azotées
+   * @return la liste des bases de lb, dans l'ordre, marquées pour indiquer
    *         que la totalité de lb n'est pas décrite
    */
   def sequenceNonDecrite(lb: List[Base]): List[(Marqueur, Base)] =
@@ -153,24 +166,25 @@ object RExpMatcher {
    */
   def prefixeMatch(e: RExp, lb: List[Base]): Option[List[Base]] = {
     lb match {
-      case Nil =>
-        matchComplet(e, Nil) match {
-          case true  => Some(Nil)
-          case false => None
-        }
-      case _ :: _ => {
-        matchComplet(e, lb) match {
-          case true  => Some(lb)
-          case false => prefixeMatch(e, supprDernierElement(lb))
+      case Nil => None
+      case base :: list => {
+        isRExpEmpty(derivee(e, base)) match {
+          case true => Some(base :: Nil)
+          case false => {
+            prefixeMatch(derivee(e, base), list) match {
+              case None       => None
+              case Some(list) => Some(base :: list)
+            }
+          }
         }
       }
     }
   }
 
   /**
-  * @param lb une liste de bases
-  * @return la liste lb sans le dernier element
-  */
+   * @param lb une liste de bases
+   * @return la liste lb sans le dernier element
+   */
   def supprDernierElement(lb: List[Base]): List[Base] = {
     lb match {
       case Nil | _ :: Nil => Nil
@@ -215,14 +229,49 @@ object RExpMatcher {
   }
 
   /**
+   * @param e une expression régulière
+   * @param lb une liste de bases
+   * @param isBis boolean qui alterne entre les sous séquences
+   * @return une liste  (m1, base1)::...::(mN,baseN)::Nil, qui marque, de façon alternée
+   *         base après base, les sous-listes de lb décrites par e.
+   *         Les basei sont les bases de lb dans l'ordre.
+   */
+  def tousLesMatchs(e: RExp, lb: List[Base], isBis: Boolean): List[(Marqueur, Base)] = {
+    lb match {
+      case Nil => Nil
+      case base :: list => {
+        prefixeMatch(e, lb) match {
+          case None => (NonDecrite, base) :: tousLesMatchs(e, list, isBis)
+          case Some(subList) => {
+            isBis match {
+              case true  => sequenceDecriteBis(subList) ++ tousLesMatchs(e, suppPrefixe(subList, lb), false)
+              case false => sequenceDecrite(subList) ++ tousLesMatchs(e, suppPrefixe(subList, lb), true)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * @param lbm une liste de bases marquées selon un résultat de recherche
    * @return une description textuelle du résultat pour l'utilisateur
    */
   def messageResultat(lbm: List[(Marqueur, Base)]): String = {
     lbm match {
-      case Nil                     => "Il n'y a pas de séquence qui décrie l'expression régulière"
-      case (Decrite, _) :: _       => "Il y a une séquence qui décrie l'expression régulière"
-      case (NonDecrite, _) :: list => messageResultat(list)
+      case (NonDecrite, _) :: list                  => messageResultat(list)
+      case (Decrite, _) :: _ | (DecriteBis, _) :: _ => "✔ Il y a au moins une séquence qui décrie l'expression régulière"
+      case _                                        => "✖ Il n'y a pas de séquence qui décrie l'expression régulière"
+    }
+  }
+  /**
+   * @param lbm une liste de bases marquées selon un résultat de recherche
+   * @return une description textuelle du résultat pour l'utilisateur avec le nombre de match
+   */
+  def messageResultatDenombrable(lbm: List[(Marqueur, Base)]): String = {
+    getNbSequence(lbm) match {
+      case 0       => "✖ Il n'y a pas de séquence qui décrie l'expression régulière"
+      case nb: Int => s"✔ Il y a $nb sous séquence(s) qui décrie(nt) l'expression régulière"
     }
   }
 
@@ -244,9 +293,27 @@ object RExpMatcher {
    */
   def sansMarqueurs(lbm: List[(Marqueur, Base)]): List[Base] = {
     lbm match {
-      case Nil                     => Nil
+      case Nil                      => Nil
       case (marqueur, base) :: list => base :: sansMarqueurs(list)
     }
+  }
+
+  def getNbSequence(lb: List[(Marqueur, Base)], nb: Int): Int = {
+    lb match {
+      case Nil | _ :: Nil => nb
+      case (Decrite, _) :: (DecriteBis, base) :: list => getNbSequence((DecriteBis, base) :: list, nb + 1)
+      case (Decrite, _) :: (NonDecrite, base) :: list => getNbSequence((NonDecrite, base) :: list, nb + 1)
+      case (NonDecrite, _) :: (DecriteBis, base) :: list => getNbSequence((DecriteBis, base) :: list, nb + 1)
+      case (NonDecrite, _) :: (Decrite, base) :: list => getNbSequence((Decrite, base) :: list, nb + 1)
+      case (DecriteBis, _) :: (NonDecrite, base) :: list => getNbSequence((NonDecrite, base) :: list, nb + 1)
+      case (DecriteBis, _) :: (Decrite, base) :: list => getNbSequence((Decrite, base) :: list, nb + 1)
+      case _ :: (marqueur, base) :: list => getNbSequence((marqueur, base) :: list, nb)
+      case _ => -999
+    }
+  }
+
+  def getNbSequence(lb: List[(Marqueur, Base)]): Int = {
+    getNbSequence(lb, 0)
   }
 
 }

@@ -54,11 +54,17 @@ object SequencesImages {
   }
 
   /**
-   * Taille du texte à utiliser pour représenter
+   * Taille du texte utiliser pour représenter
    * graphiquement les bases azotées.
    */
-  val fontSizeBase: Int = 14
+  val fontSizeBase: Int = 15
+  /**
+   * Couleur des bases utiliser
+   */
   val textColorDecrite: Color = Color(66, 79, 170, 255)
+  val boxColorDecrite: Color = Color(255, 255, 100, 100)
+  val textColorDecriteBis: Color = Color(200, 79, 170, 255)
+  val boxColorDecriteBis: Color = Color(255, 100, 100, 50)
   val textColorNonDecrite: Color = Color(66, 79, 170, 150)
 
   /**
@@ -68,9 +74,12 @@ object SequencesImages {
   def marqueurBaseToImage(mb: (Marqueur, Base)): Image = {
     mb._1 match {
       case Decrite => on(
-        lineColor(fillColor(Rectangle(10, fontSizeBase), Color(255, 57, 110, 120)), Color(0,0,0,0)),
+        lineColor(fillColor(Rectangle(10, fontSizeBase), boxColorDecrite), Color(0, 0, 0, 0)),
         lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorDecrite), textColorDecrite))
-      case NonDecrite => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorNonDecrite), textColorNonDecrite)
+      case DecriteBis => on(
+        lineColor(fillColor(Rectangle(10, fontSizeBase), boxColorDecriteBis), Color(0, 0, 0, 0)),
+        lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorDecriteBis), textColorDecriteBis))
+      case _ => lineColor(fillColor(Text(mb._2.toString(), fontSizeBase), textColorNonDecrite), textColorNonDecrite)
     }
   }
 

@@ -21,6 +21,7 @@ import fr.istic.si2.adnmatch.SequencesImages._
 sealed trait Etat
 case object Init extends Etat
 case class Normal(re: RExp, s: List[(Marqueur, Base)]) extends Etat
+case class Denombrable(re: RExp, s: List[(Marqueur, Base)]) extends Etat
 case class Erreur(re: RExp, s: List[(Marqueur, Base)]) extends Etat
 case object End extends Etat
 
@@ -34,7 +35,7 @@ object ADNMatchUniverse extends Universe[Etat] {
   /**
    * Largeur en pixels de la fenêtre graphique
    */
-  val WIDTH: Int = 800
+  val WIDTH: Int = 900
 
   /**
    * Hauteur en pixels de la fenêtre graphique
@@ -98,6 +99,10 @@ object ADNMatchUniverse extends Universe[Etat] {
       case (Normal(re, lsm), KeyPressed(KeyAscii('m'))) =>
         Normal(re, tousLesMatchs(re, sansMarqueurs(lsm)))
 
+      // Rechercher le motif dénombrable: une séquence et une expression régulière doivent être présents
+      case (Normal(re, lsm), KeyPressed(KeyAscii('n'))) =>
+        Denombrable(re, tousLesMatchs(re, sansMarqueurs(lsm), true))
+
       // Effacer la recherche de motif: une séquence et une expression régulière doivent être présents
       // On conserve l'expression régulière
       case (Normal(re, lsm), KeyPressed(KeyAscii('a'))) =>
@@ -125,10 +130,11 @@ object ADNMatchUniverse extends Universe[Etat] {
    */
   def toImage(s: Etat): Image = {
     s match {
-      case Init           => cadre("Appuyez sur la touche f pour charger une sequence", Vide, Nil)
-      case End            => cadre("Fini!", Vide, Nil)
-      case Normal(re, lw) => cadre(messageResultat(lw), re, lw)
-      case Erreur(re, lw) => cadre("RExp saisie invalide, veuillez ré-essayer", re, lw)
+      case Init                => cadre("Appuyez sur la touche f pour charger une sequence", Vide, Nil)
+      case End                 => cadre("Fini!", Vide, Nil)
+      case Normal(re, lw)      => cadre(messageResultat(lw), re, lw)
+      case Denombrable(re, lw) => cadre(messageResultatDenombrable(lw), re, lw)
+      case Erreur(re, lw)      => cadre("RExp saisie invalide, veuillez ré-essayer", re, lw)
     }
   }
 
@@ -139,9 +145,9 @@ object ADNMatchUniverse extends Universe[Etat] {
   val fontsize: Int = 20
   val msgSize: Float = 1.1f * fontsize
   val seqSize: Float = 0.9f * HEIGHT
-  
+
   //Themes
-  
+
   //Bleu Foncé
   //val primaryColor: Color = Color(81,43,88,255)
   //val secondaryColor: Color = Color(254,52,110,255)
@@ -153,7 +159,7 @@ object ADNMatchUniverse extends Universe[Etat] {
   //val secondaryColor: Color = Color(89, 97, 87, 255)
   //val terciaryColor: Color = Color(91, 140, 90, 255)
   //val textColor: Color = Color(207, 209, 134, 255)
-  
+
   //Pale
   val primaryColor: Color = Color(255, 213, 229, 255)
   val secondaryColor: Color = Color(255, 255, 221, 255)
