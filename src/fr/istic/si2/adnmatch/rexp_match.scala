@@ -148,19 +148,6 @@ object RExpMatcher {
 
   /**
    * @param e une expression régulière
-   * @return le préfixe de l'expression régulière e
-   */
-  def getFirstRExp(e: RExp): RExp = {
-    e match {
-      case Impossible | Vide | Nqb | UneBase(_) | Repete(_) => e
-      case Choix(rexp1, rexp2)                              => simplifiedChoix(rexp1, rexp2)
-      case NFois(rexp, _)                                   => getFirstRExp(rexp)
-      case Concat(rexp1, rexp2)                             => getFirstRExp(rexp1)
-    }
-  }
-
-  /**
-   * @param e une expression régulière
    * @param lb une liste de bases azotées
    * @return s'il existe, le plus petit prefixe de lb qui est décrit par e
    */
@@ -178,17 +165,6 @@ object RExpMatcher {
           }
         }
       }
-    }
-  }
-
-  /**
-   * @param lb une liste de bases
-   * @return la liste lb sans le dernier element
-   */
-  def supprDernierElement(lb: List[Base]): List[Base] = {
-    lb match {
-      case Nil | _ :: Nil => Nil
-      case base :: list   => base :: supprDernierElement(list)
     }
   }
 
@@ -276,6 +252,18 @@ object RExpMatcher {
   }
 
   /**
+   * @param lb liste de doublet (marqueur , base)
+   * @return est-ce que lb est dénombrable ?
+   */
+  def isDenombrable(lb: List[(Marqueur, Base)]): Boolean = {
+    lb match {
+      case Nil                  => false
+      case (DecriteBis, _) :: _ => true
+      case (_, _) :: list       => isDenombrable(list)
+    }
+  }
+
+  /**
    * @param lb une liste de bases azotées marquées
    * @return liste des mêmes bases que lb, mais où tous les marqueurs indiquent
    *         une non-correspondance
@@ -298,6 +286,11 @@ object RExpMatcher {
     }
   }
 
+  /**
+   * @param lb une liste de bases azotées marquées
+   * @param nb le bombre de séquence trouvé
+   * @return le nombre de séquence correspondantes à l'expression RExp
+   */
   def getNbSequence(lb: List[(Marqueur, Base)], nb: Int): Int = {
     lb match {
       case Nil | _ :: Nil => nb
@@ -312,6 +305,10 @@ object RExpMatcher {
     }
   }
 
+  /**
+   * @param lb une liste de bases azotées marquées
+   * @return le nombre de séquence correspondantes à l'expression RExp
+   */
   def getNbSequence(lb: List[(Marqueur, Base)]): Int = {
     getNbSequence(lb, 0)
   }

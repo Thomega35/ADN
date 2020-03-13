@@ -21,7 +21,6 @@ import fr.istic.si2.adnmatch.SequencesImages._
 sealed trait Etat
 case object Init extends Etat
 case class Normal(re: RExp, s: List[(Marqueur, Base)]) extends Etat
-case class Denombrable(re: RExp, s: List[(Marqueur, Base)]) extends Etat
 case class Erreur(re: RExp, s: List[(Marqueur, Base)]) extends Etat
 case object End extends Etat
 
@@ -101,7 +100,7 @@ object ADNMatchUniverse extends Universe[Etat] {
 
       // Rechercher le motif dénombrable: une séquence et une expression régulière doivent être présents
       case (Normal(re, lsm), KeyPressed(KeyAscii('n'))) =>
-        Denombrable(re, tousLesMatchs(re, sansMarqueurs(lsm), true))
+        Normal(re, tousLesMatchs(re, sansMarqueurs(lsm), true))
 
       // Effacer la recherche de motif: une séquence et une expression régulière doivent être présents
       // On conserve l'expression régulière
@@ -132,8 +131,10 @@ object ADNMatchUniverse extends Universe[Etat] {
     s match {
       case Init                => cadre("Appuyez sur la touche f pour charger une sequence", Vide, Nil)
       case End                 => cadre("Fini!", Vide, Nil)
-      case Normal(re, lw)      => cadre(messageResultat(lw), re, lw)
-      case Denombrable(re, lw) => cadre(messageResultatDenombrable(lw), re, lw)
+      case Normal(re, lw)      => {
+        if(isDenombrable(lw))cadre(messageResultatDenombrable(lw), re, lw)
+        else cadre(messageResultat(lw), re, lw)
+      }
       case Erreur(re, lw)      => cadre("RExp saisie invalide, veuillez ré-essayer", re, lw)
     }
   }
